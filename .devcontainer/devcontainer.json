@@ -1,0 +1,82 @@
+{
+    "name": "Teddy & Friends Bot",
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-vscode.vscode-typescript-next",
+                "bradlc.vscode-tailwindcss",
+                "esbenp.prettier-vscode",
+                "ms-vscode.vscode-eslint",
+                "prisma.prisma",
+                "ms-vscode.vscode-json",
+                "redhat.vscode-yaml",
+                "ms-vscode-remote.remote-containers",
+                "ms-vscode.remote-explorer",
+                "github.copilot",
+                "github.copilot-chat"
+            ],
+            "settings": {
+                "typescript.preferences.importModuleSpecifier": "relative",
+                "editor.formatOnSave": true,
+                "editor.defaultFormatter": "esbenp.prettier-vscode",
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.eslint": "explicit"
+                },
+                "files.associations": {
+                    "*.env*": "dotenv"
+                },
+                "emmet.includeLanguages": {
+                    "typescript": "html",
+                    "typescriptreact": "html"
+                }
+            }
+        }
+    },
+    "forwardPorts": [
+        3000,
+        3001,
+        5432,
+        6379,
+        8080
+    ],
+    "portsAttributes": {
+        "3000": {
+            "label": "Admin Panel",
+            "onAutoForward": "notify"
+        },
+        "3001": {
+            "label": "API Server",
+            "onAutoForward": "notify"
+        },
+        "5432": {
+            "label": "PostgreSQL",
+            "onAutoForward": "silent"
+        },
+        "6379": {
+            "label": "Redis",
+            "onAutoForward": "silent"
+        },
+        "8080": {
+            "label": "Nginx Proxy",
+            "onAutoForward": "notify"
+        }
+    },
+    "postCreateCommand": "corepack enable && pnpm install",
+    "remoteUser": "node",
+    "workspaceFolder": "/workspaces/teddy_project",
+    "mounts": [
+        "source=${localWorkspaceFolder},target=/workspaces/teddy_project,type=bind,consistency=cached"
+    ],
+    "containerEnv": {
+        "NODE_ENV": "development",
+        "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/teddy?schema=public",
+        "REDIS_URL": "redis://localhost:6379"
+    }
+}

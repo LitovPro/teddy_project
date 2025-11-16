@@ -1,0 +1,54 @@
+{
+  "greeting": "👋 Hello! Welcome to Teddy & Friends playground!",
+  "menu": {
+    "loyalty": "🌟 Loyalty Card",
+    "cafe": "☕ Café Menu",
+    "hours": "🕐 Opening Hours",
+    "events": "🎉 Events",
+    "rules": "📋 Rules",
+    "profile": "👤 My Profile",
+    "unsubscribe": "🔕 Unsubscribe"
+  },
+  "onboarding": {
+    "choose_language": "Please choose your language / Por favor escolha o seu idioma",
+    "welcome": "Welcome to Teddy & Friends! 🐻\n\nWe're excited to have you here. Let's get you set up with our loyalty program.",
+    "customer_number": "Your customer number is: **{{clientCode}}**\n\nShow this to our staff when you visit!",
+    "menu_hint": "Check out our delicious menu and start collecting stamps for your free hour! 🌟"
+  },
+  "loyalty": {
+    "progress": "🌟 Your progress: {{current}}/{{target}} visits\n\nKeep visiting to earn your free hour!",
+    "completed": "🎉 Congratulations! You've completed your loyalty card!",
+    "voucher_ready": "Your FREE 1-hour voucher is ready! Show this to our staff.",
+    "card": {
+      "title": "Loyalty Card",
+      "visits": "visits",
+      "reward": "🎉 FREE HOUR EARNED!",
+      "remaining": "{{count}} more visits to go!",
+      "footer": "Show this card to our staff"
+    }
+  },
+  "voucher": {
+    "title": "FREE 1-HOUR VOUCHER",
+    "validUntil": "Valid until: {{date}}"
+  },
+  "notifications": {
+    "visitConfirmation": "✅ Visit recorded! You now have {{current}}/{{target}} visits. {{remaining}} more to go!",
+    "voucherIssued": "🎉 Congratulations! Your free 1-hour voucher is ready! Code: {{code}} (Valid until: {{validUntil}})"
+  },
+  "templates": {
+    "welcome": "Welcome to Teddy & Friends! 🐻",
+    "event_reminder": "🎉 Don't forget about our special event tomorrow!",
+    "promo_offer": "🌟 Special offer just for you: {{offer}}"
+  },
+  "checkout": {
+    "message": "Thank you for visiting Teddy & Friends! 🐻\n\n📍 Find us again: {{gmapsUrl}}\n📸 Follow us: {{instagramUrl}}\n⭐ Leave a review on Google Maps!"
+  },
+  "subscribe": {
+    "prompt": "Would you like to receive updates about events and special offers?",
+    "ok": "Yes, that's fine!",
+    "no": "No, thanks"
+  },
+  "unsubscribe": {
+    "done": "You've been unsubscribed from notifications. You can re-subscribe anytime from the menu."
+  }
+}

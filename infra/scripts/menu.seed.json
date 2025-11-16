@@ -1,0 +1,37 @@
+{
+  "categories": [
+    {
+      "key": "food",
+      "name_en": "Food",
+      "name_pt": "Food",
+      "items": [
+        { "sku": "tosta-mista", "name_en": "Mixed Toast", "name_pt": "Tosta Mista", "desc_en": "Grilled cheese and ham sandwich", "desc_pt": "Sandes de queijo e fiambre grelhada", "price_eur": 7.5 },
+        { "sku": "tosta-tuna", "name_en": "Tuna Toast + chips", "name_pt": "Tosta de Atum + batatas", "desc_en": "Grilled bread with tuna sauce, tomato, oregano", "desc_pt": "Pão grelhado com molho de atum, tomate e orégãos", "price_eur": 9.0 },
+        { "sku": "tosta-vegan", "name_en": "Vegan Toast", "name_pt": "Tosta Vegan", "desc_en": "Grilled bread, avocado, tomato, oregano", "desc_pt": "Pão grelhado, abacate, tomate e orégãos", "price_eur": 9.5 },
+        { "sku": "mini-pancakes-salted", "name_en": "Mini Pancakes (Savory)", "name_pt": "Mini Pancakes Salgado", "desc_en": "Salted yogurt and ham", "desc_pt": "Iogurte salgado e fiambre", "price_eur": 7.5 },
+        { "sku": "mini-pancakes-sweet", "name_en": "Mini Pancakes (Sweet)", "name_pt": "Mini Pancakes Doce", "desc_en": "Homemade jam and honey", "desc_pt": "Compota caseira e mel", "price_eur": 7.0 },
+        { "sku": "kids-toast-teddy", "name_en": "Mini Toast Teddy", "name_pt": "Mini Tosta Teddy", "desc_en": "Margarine, cheese, ham, veggies of choice", "desc_pt": "Margarina, queijo, fiambre e vegetais à escolha", "price_eur": 6.0 },
+        { "sku": "kids-pancakes-teddy", "name_en": "Mini Teddy Pancakes", "name_pt": "Mini Teddy Pancakes", "desc_en": "Jam, fruits, honey & chocolate", "desc_pt": "Compota, frutas, mel e chocolate", "price_eur": 7.0 },
+        { "sku": "dessert-fruit-salad", "name_en": "Fruit Salad", "name_pt": "Salada de Frutas", "price_eur": 6.0 },
+        { "sku": "dessert-sweet-balls", "name_en": "Sweet Balls", "name_pt": "Doces Bolas", "price_eur": 6.0 }
+      ]
+    },
+    {
+      "key": "drinks",
+      "name_en": "Drinks",
+      "name_pt": "Bebidas",
+      "items": [
+        { "sku": "water-still-05", "name_en": "Still Water (0.5L)", "name_pt": "Água sem gás (0.5L)", "price_eur": 1.4 },
+        { "sku": "water-sparkling-05", "name_en": "Sparkling Water (0.5L)", "name_pt": "Água com gás (0.5L)", "price_eur": 1.8 },
+        { "sku": "orange-juice", "name_en": "Natural Orange Juice", "name_pt": "Sumo de Laranja Natural", "price_eur": 3.0 },
+        { "sku": "lemonade", "name_en": "Lemonade", "name_pt": "Limonada", "price_eur": 3.0 },
+        { "sku": "juice-tetra", "name_en": "Juice (0.2L, tetra pak)", "name_pt": "Sumo (0,2L, tetra pak)", "price_eur": 1.6 },
+        { "sku": "espresso", "name_en": "Espresso", "name_pt": "Café Expresso", "price_eur": 0.8 },
+        { "sku": "americano", "name_en": "Americano", "name_pt": "Café Americano", "price_eur": 0.9 },
+        { "sku": "coffee-milk", "name_en": "Coffee with Milk", "name_pt": "Café com Leite", "price_eur": 1.5 },
+        { "sku": "teddy-coffee", "name_en": "Teddy Coffee", "name_pt": "Café Teddy", "price_eur": 1.5 },
+        { "sku": "tea", "name_en": "Tea", "name_pt": "Chá", "price_eur": 1.5 }
+      ]
+    }
+  ]
+}

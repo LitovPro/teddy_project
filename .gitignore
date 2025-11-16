@@ -1,0 +1,41 @@
+# Node/TS/Monorepo
+node_modules/
+.dist/
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+.next/
+.out/
+.vercel/
+.eslintcache
+
+# Logs / runtime
+logs/
+*.log
+pids/
+*.pid
+*.seed
+tmp/
+.cache/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Prisma runtime artifacts (схемы и миграции — в репо)
+# (оставляем prisma/schema.prisma и prisma/migrations/**)
+.prisma/
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-data/
+# TypeScript build info
+*.tsbuildinfo

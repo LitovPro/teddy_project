@@ -1,0 +1,202 @@
+# Безопасная конфигурация Docker Compose для слабого сервера
+# Ограничения ресурсов и оптимизация для 2 CPU / 2GB RAM
+version: '3.8'
+
+services:
+  # PostgreSQL Database с ограничениями ресурсов
+  db:
+    image: postgres:16-alpine
+    container_name: teddy-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: teddy
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # Оптимизация PostgreSQL для слабого сервера
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # Ограничения ресурсов для 4 CPU / 8GB RAM
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    # Оптимизированные настройки PostgreSQL
+    command: >
+      postgres
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+      -c maintenance_work_mem=128MB
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=4MB
+      -c default_statistics_target=100
+      -c random_page_cost=1.1
+      -c effective_io_concurrency=200
+      -c work_mem=4MB
+      -c min_wal_size=1GB
+      -c max_wal_size=2GB
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis Cache с ограничениями ресурсов
+  redis:
+    image: redis:7-alpine
+    container_name: teddy-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    # Ограничения ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    # Оптимизированные настройки Redis
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 100mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # API (NestJS) с ограничениями ресурсов
+  api:
+    build:
+      context: .
+      dockerfile: infra/docker/api-optimized.Dockerfile
+    container_name: teddy-api
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/teddy?schema=public
+      - REDIS_URL=redis://redis:6379
+      - PORT=3001
+      # Оптимизация Node.js
+      - NODE_OPTIONS=--max-old-space-size=512
+      - UV_THREADPOOL_SIZE=4
+    ports:
+      - "3001:3001"
+    # Ограничения ресурсов для 4 CPU / 8GB RAM
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/api/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Admin (Next.js) с ограничениями ресурсов
+  admin:
+    build:
+      context: .
+      dockerfile: infra/docker/admin.Dockerfile
+    container_name: teddy-admin
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001/api
+      - PORT=3000
+      # Оптимизация Node.js
+      - NODE_OPTIONS=--max-old-space-size=512
+      - UV_THREADPOOL_SIZE=4
+    ports:
+      - "3000:3000"
+    # Ограничения ресурсов для 4 CPU / 8GB RAM
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 768M
+        reservations:
+          cpus: '0.5'
+          memory: 384M
+    depends_on:
+      - api
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/admin/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx (Reverse Proxy) с ограничениями ресурсов
+  nginx:
+    image: nginx:alpine
+    container_name: teddy-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./storage:/var/www/storage:ro
+    # Ограничения ресурсов
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    depends_on:
+      - api
+      - admin
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# Глобальные настройки для ограничения ресурсов
+x-resource-limits: &resource-limits
+  deploy:
+    resources:
+      limits:
+        cpus: '1.0'
+        memory: 1G
+      reservations:
+        cpus: '0.5'
+        memory: 512M

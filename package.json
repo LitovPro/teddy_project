@@ -1,0 +1,63 @@
+{
+  "name": "teddy-bot",
+  "version": "1.0.0",
+  "description": "WhatsApp bot for Teddy & Friends playground",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel --filter=./apps/bot --filter=./apps/admin dev",
+    "dev:local": "powershell -ExecutionPolicy Bypass -File dev.ps1",
+    "dev:api": "cd apps/bot && pnpm start:dev",
+    "dev:admin": "cd apps/admin && pnpm dev",
+    "build": "pnpm --recursive build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "lint:fix": "pnpm --recursive lint:fix",
+    "typecheck": "pnpm --recursive typecheck",
+    "clean": "pnpm --recursive clean",
+    "db:migrate": "pnpm prisma migrate deploy",
+    "db:seed": "pnpm prisma db seed",
+    "db:studio": "pnpm prisma studio",
+    "setup:env": "powershell -ExecutionPolicy Bypass -File setup-env.ps1"
+  },
+  "prisma": {
+    "seed": "tsx infra/scripts/seed.ts"
+  },
+  "devDependencies": {
+    "@prisma/client": "^5.7.0",
+    "@types/eslint-scope": "^8.3.2",
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0",
+    "prisma": "^5.7.0",
+    "tsx": "^4.6.0",
+    "typescript": "^5.3.0"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "dependencies": {
+    "@types/qrcode": "^1.5.5",
+    "argon2": "^0.44.0",
+    "qrcode": "^1.5.3"
+  }
+}

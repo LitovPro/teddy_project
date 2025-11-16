@@ -1,0 +1,55 @@
+{
+  "name": "@teddy/worker",
+  "version": "1.0.0",
+  "description": "Teddy & Friends Background Worker",
+  "author": "Teddy & Friends",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/main.js",
+    "start:dev": "tsx src/main.ts",
+    "start:debug": "tsx --inspect src/main.ts",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:cov": "vitest --coverage",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy"
+  },
+  "dependencies": {
+    "@nestjs/bullmq": "^10.0.0",
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.1.1",
+    "@nestjs/core": "^10.0.0",
+    "@prisma/client": "^5.7.0",
+    "@teddy/shared": "workspace:*",
+    "bullmq": "^4.15.0",
+    "canvas": "^2.11.2",
+    "ioredis": "^5.3.2",
+    "pino": "^8.17.0",
+    "pino-pretty": "^10.3.0",
+    "prisma": "^5.7.0",
+    "qrcode": "^1.5.3",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/qrcode": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
+    "eslint": "^9.34.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "source-map-support": "^0.5.21",
+    "tsx": "^4.6.0",
+    "typescript": "^5.1.3",
+    "vitest": "^1.0.0"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}
