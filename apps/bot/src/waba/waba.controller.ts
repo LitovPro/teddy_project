@@ -12,7 +12,7 @@ import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { EventsService } from '../events/events.service';
 import { BookingsService } from '../events/bookings.service';
-import type { WhatsAppWebhook } from '@teddy/shared';
+import type { WhatsAppWebhook, WhatsAppMessage } from '@teddy/shared';
 
 @Controller('webhooks/whatsapp')
 export class WabaController {
@@ -66,6 +66,29 @@ export class WabaController {
       await this.processSimpleMessage(webhook.From, webhook.Body);
 
       return { success: true, message: 'Simple message processed' };
+    }
+
+    // Handle 360dialog webhook format
+    if (webhook.messages && Array.isArray(webhook.messages)) {
+      try {
+        for (const message of webhook.messages) {
+          // Convert 360dialog format to WhatsAppMessage format
+          const whatsappMessage: WhatsAppMessage = {
+            from: message.from,
+            type: message.type || 'text',
+            text: message.text ? { body: message.text.body } : undefined,
+            timestamp: message.timestamp,
+            id: message.id,
+          };
+
+          await this.processMessage(whatsappMessage, '');
+        }
+
+        return { success: true };
+      } catch (error) {
+        this.logger.error('Error processing 360dialog webhook:', error);
+        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      }
     }
 
     // Handle Facebook/Meta webhook format

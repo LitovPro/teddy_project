@@ -30,6 +30,147 @@ export class WabaClientMock implements WabaClient {
 }
 
 @Injectable()
+export class Waba360DialogClient implements WabaClient {
+  private readonly logger = new Logger(Waba360DialogClient.name);
+  private readonly apiKey: string;
+  private readonly baseUrl: string;
+
+  constructor(private configService: ConfigService) {
+    this.apiKey = this.configService.get<string>('DIALOG360_API_KEY') || '';
+    this.baseUrl = this.configService.get<string>('DIALOG360_BASE_URL') || 'https://waba-v2.360dialog.io';
+
+    if (!this.apiKey) {
+      this.logger.error('DIALOG360_API_KEY not configured');
+      throw new Error('DIALOG360_API_KEY is required');
+    }
+
+    this.logger.log('360dialog client initialized');
+  }
+
+  async sendMessage(to: string, message: string): Promise<void> {
+    try {
+      // Remove whatsapp: prefix if present
+      const phoneNumber = to.replace('whatsapp:', '').replace('+', '');
+
+      const response = await fetch(`${this.baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'D360-API-KEY': this.apiKey,
+        },
+        body: JSON.stringify({
+          recipient_type: 'individual',
+          to: phoneNumber,
+          type: 'text',
+          text: {
+            body: message,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        this.logger.error(`Failed to send message: ${response.status} ${errorText}`);
+        throw new Error(`Failed to send message: ${response.status}`);
+      }
+
+      const result = await response.json();
+      this.logger.log(`Message sent successfully to ${to}: ${result.messages?.[0]?.id || 'unknown'}`);
+    } catch (error) {
+      this.logger.error(`Error sending message to ${to}:`, error);
+      throw error;
+    }
+  }
+
+  async sendTemplate(to: string, templateName: string, language: Language, variables?: Record<string, string>): Promise<void> {
+    try {
+      // Remove whatsapp: prefix if present
+      const phoneNumber = to.replace('whatsapp:', '').replace('+', '');
+
+      // Convert variables to format expected by 360dialog
+      const components: any[] = [];
+      if (variables) {
+        components.push({
+          type: 'body',
+          parameters: Object.entries(variables).map(([key, value]) => ({
+            type: 'text',
+            text: value,
+          })),
+        });
+      }
+
+      const response = await fetch(`${this.baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'D360-API-KEY': this.apiKey,
+        },
+        body: JSON.stringify({
+          recipient_type: 'individual',
+          to: phoneNumber,
+          type: 'template',
+          template: {
+            name: templateName,
+            language: {
+              code: language === 'PT' ? 'pt' : 'en',
+            },
+            components: components.length > 0 ? components : undefined,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        this.logger.error(`Failed to send template: ${response.status} ${errorText}`);
+        throw new Error(`Failed to send template: ${response.status}`);
+      }
+
+      const result = await response.json();
+      this.logger.log(`Template sent successfully to ${to}: ${result.messages?.[0]?.id || 'unknown'}`);
+    } catch (error) {
+      this.logger.error(`Error sending template to ${to}:`, error);
+      throw error;
+    }
+  }
+
+  async sendImage(to: string, imageUrl: string, caption?: string): Promise<void> {
+    try {
+      // Remove whatsapp: prefix if present
+      const phoneNumber = to.replace('whatsapp:', '').replace('+', '');
+
+      const response = await fetch(`${this.baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'D360-API-KEY': this.apiKey,
+        },
+        body: JSON.stringify({
+          recipient_type: 'individual',
+          to: phoneNumber,
+          type: 'image',
+          image: {
+            link: imageUrl,
+            caption: caption,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        this.logger.error(`Failed to send image: ${response.status} ${errorText}`);
+        throw new Error(`Failed to send image: ${response.status}`);
+      }
+
+      const result = await response.json();
+      this.logger.log(`Image sent successfully to ${to}: ${result.messages?.[0]?.id || 'unknown'}`);
+    } catch (error) {
+      this.logger.error(`Error sending image to ${to}:`, error);
+      throw error;
+    }
+  }
+}
+
+@Injectable()
 export class WabaService {
   private readonly logger = new Logger(WabaService.name);
   private readonly client: WabaClient;
@@ -39,8 +180,15 @@ export class WabaService {
     private messageProcessor: MessageProcessorService,
     private conversationService: ConversationService,
   ) {
-    // For now, always use mock client
-    this.client = new WabaClientMock();
+    // Use 360dialog client if API key is configured, otherwise use mock
+    const dialog360ApiKey = this.configService.get<string>('DIALOG360_API_KEY');
+    if (dialog360ApiKey) {
+      this.logger.log('Using 360dialog client');
+      this.client = new Waba360DialogClient(configService);
+    } else {
+      this.logger.warn('DIALOG360_API_KEY not configured, using mock client');
+      this.client = new WabaClientMock();
+    }
   }
 
   async sendWelcomeMessage(waId: string, clientCode: string, language: Language) {
